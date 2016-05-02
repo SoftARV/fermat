@@ -288,6 +288,7 @@ public abstract class FermatActivity extends AppCompatActivity implements
             getErrorManager().reportUnexpectedUIException(UISource.ACTIVITY, UnexpectedUIExceptionSeverity.UNSTABLE, FermatException.wrapException(e));
 //            makeText(getApplicationContext(), "Oooops! recovering from system error",
 //                    LENGTH_LONG).show();
+            e.printStackTrace();
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -365,6 +366,7 @@ public abstract class FermatActivity extends AppCompatActivity implements
             getErrorManager().reportUnexpectedUIException(UISource.ACTIVITY, UnexpectedUIExceptionSeverity.UNSTABLE, FermatException.wrapException(e));
             makeText(getApplicationContext(), "Recovering from system error",
                     LENGTH_LONG).show();
+            e.printStackTrace();
             handleExceptionAndRestart();
         }
     }
@@ -1067,6 +1069,7 @@ public abstract class FermatActivity extends AppCompatActivity implements
             getErrorManager().reportUnexpectedUIException(UISource.ACTIVITY, UnexpectedUIExceptionSeverity.CRASH, FermatException.wrapException(e));
             makeText(getApplicationContext(), "Recovering from system error",
                     LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 
@@ -1115,6 +1118,7 @@ public abstract class FermatActivity extends AppCompatActivity implements
 
             makeText(getApplicationContext(), "Recovering from system error",
                     LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 
@@ -1144,7 +1148,7 @@ public abstract class FermatActivity extends AppCompatActivity implements
 
                         String type = desktopObject.getLastActivity().getFragment(DesktopFragmentsEnumType.DESKTOP_MAIN.getKey()).getType();
 
-                        fragmentsArray[0] = appConnections.getFragmentFactory().getFragment(
+                        fragmentsArray[1] = appConnections.getFragmentFactory().getFragment(
                                 type,
                                 createOrOpenApp(getDesktopManager()),
                                 null
@@ -1152,7 +1156,7 @@ public abstract class FermatActivity extends AppCompatActivity implements
 
                         type = desktopObject.getLastActivity().getFragment(DesktopFragmentsEnumType.DESKTOP_P2P_MAIN.getKey()).getType();
 
-                        fragmentsArray[1] = appConnections.getFragmentFactory().getFragment(
+                        fragmentsArray[0] = appConnections.getFragmentFactory().getFragment(
                                 type,
                                 createOrOpenApp(getDesktopManager()),
                                 null
@@ -1253,6 +1257,7 @@ public abstract class FermatActivity extends AppCompatActivity implements
         } catch (Exception ex) {
             getErrorManager().reportUnexpectedUIException(UISource.ACTIVITY, UnexpectedUIExceptionSeverity.UNSTABLE, FermatException.wrapException(ex));
             makeText(getApplicationContext(), "Recovering from system error", LENGTH_SHORT).show();
+            ex.printStackTrace();
             handleExceptionAndRestart();
         }
     }
@@ -1709,8 +1714,13 @@ public abstract class FermatActivity extends AppCompatActivity implements
      * Report error
      */
     public void reportError(String mailUserTo) throws Exception {
-        YourOwnSender yourOwnSender = new YourOwnSender(this);
-        yourOwnSender.send(mailUserTo, LogReader.getLog().toString());
+//        YourOwnSender yourOwnSender = new YourOwnSender(this);
+//        String log = LogReader.getLog().toString();
+//        yourOwnSender.send(mailUserTo,log );
+        LogReader.getLog(this,mailUserTo);
+      //  AndroidExternalAppsIntentHelper.sendMail(this,new String[]{mailUserTo},"Error report",log);
+
+
     }
 
     //send mail
@@ -1730,8 +1740,22 @@ public abstract class FermatActivity extends AppCompatActivity implements
         super.onPause();
         if(broadcastManager!=null)broadcastManager.stop();
 //        networkStateReceiver.removeListener(this);
+    }
 
-
+    @Override
+    public void selectApp(String appPublicKey) throws Exception {
+        try{
+            Intent intent;
+            intent = new Intent();
+            intent.putExtra(ApplicationConstants.INTENT_DESKTOP_APP_PUBLIC_KEY, appPublicKey);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(ApplicationConstants.INTENT_APP_TYPE,ApplicationSession.getInstance().getAppManager().getApp(appPublicKey).getAppType());
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            intent.setAction("org.fermat.APP_LAUNCHER");
+            sendBroadcast(intent);
+        }catch (Exception e){
+            throw new Exception("App public key not exist");
+        }
     }
 
 
