@@ -50,8 +50,7 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
     private ChatManager chatManager;
     //private ChatModuleManager moduleManager;
     private ErrorManager errorManager;
-    private SettingsManager<ChatSettings> settingsManager;
-    private ChatPreferenceSettings chatSettings;
+    private ChatPreferenceSettings chatSettings = null;
     private ChatSession chatSession;
     private Toolbar toolbar;
     ChatActorCommunitySelectableIdentity chatIdentity;
@@ -74,7 +73,6 @@ public class ChatFragment extends AbstractFermatFragment {//ActionBarActivity
             errorManager = appSession.getErrorManager();
 
             //Obtain chatSettings  or create new chat settings if first time opening chat platform
-            chatSettings = null;
             try {
                 chatSettings = chatManager.getSettingsManager().loadAndGetSettings(appSession.getAppPublicKey());
             } catch (Exception e) {

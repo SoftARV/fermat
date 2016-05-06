@@ -52,7 +52,6 @@ public class WizardTwoStepBroadcastFragment extends AbstractFermatFragment {
     ArrayList<String> contactname = new ArrayList<>();
     ArrayList<Bitmap> contacticon = new ArrayList<>();
     ArrayList<UUID> contactid = new ArrayList<>();
-    private SettingsManager<ChatSettings> settingsManager;
     private ChatSession chatSession;
     private ChatPreferenceSettings chatSettings;
     WizardListAdapter adapter;

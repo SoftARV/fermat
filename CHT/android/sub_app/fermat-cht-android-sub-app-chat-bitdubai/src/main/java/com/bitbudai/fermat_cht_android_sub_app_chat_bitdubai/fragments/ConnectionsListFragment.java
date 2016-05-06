@@ -62,7 +62,6 @@ public class ConnectionsListFragment extends AbstractFermatFragment {
     private ChatManager chatManager;
     private ChatModuleManager moduleManager;
     private ErrorManager errorManager;
-    private SettingsManager<ChatSettings> settingsManager;
     private ChatSession chatSession;
     private Toolbar toolbar;
     ListView list;

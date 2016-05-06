@@ -46,7 +46,6 @@ public class WizardScheduledTwoStepBroadcastFragment extends AbstractFermatFragm
     private ChatManager walletManager;
     private ErrorManager errorManager;
     String DateSelect,TimeSelect;
-    private SettingsManager<ChatSettings> settingsManager;
     private ChatPreferenceSettings chatSettings;
     ArrayList<String> datelist = new ArrayList<String>();
     ArrayList<String> timelist = new ArrayList<String>();

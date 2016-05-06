@@ -46,8 +46,7 @@ public class ChatErrorReportFragment extends AbstractFermatFragment {
     private ChatManager chatManager;
     //private ChatModuleManager moduleManager;
     private ErrorManager errorManager;
-    private SettingsManager<ChatSettings> settingsManager;
-    private ChatPreferenceSettings chatSettings;
+    private ChatPreferenceSettings chatSettings = null;
     private ChatSession chatSession;
 
     private Button okBtn;

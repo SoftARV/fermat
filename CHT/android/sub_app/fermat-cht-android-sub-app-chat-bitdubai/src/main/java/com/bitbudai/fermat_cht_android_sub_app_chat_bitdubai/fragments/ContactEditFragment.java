@@ -80,7 +80,6 @@ public class ContactEditFragment extends AbstractFermatFragment {
     private ChatManager chatManager;
     private ChatModuleManager moduleManager;
     private ErrorManager errorManager;
-    private SettingsManager<ChatSettings> settingsManager;
     private ChatSession chatSession;
     private Toolbar toolbar;
     //Defines a tag for identifying log entries

@@ -85,8 +85,8 @@ public class CreateChatIdentityFragment extends AbstractFermatFragment {
     ChatIdentitySession Session;
     Context context;
     Toolbar toolbar;
-    private SettingsManager<ChatIdentitySettings> settingsManager;
-    private ChatIdentityPreferenceSettings chatIdentitySettings;
+
+    private ChatIdentityPreferenceSettings chatIdentitySettings = null;
     public static CreateChatIdentityFragment newInstance() {
         return new CreateChatIdentityFragment();
     }
@@ -100,7 +100,7 @@ public class CreateChatIdentityFragment extends AbstractFermatFragment {
             moduleManager =  Session.getModuleManager();
             errorManager = Session.getErrorManager();
 
-            chatIdentitySettings = null;
+
             try {
                 chatIdentitySettings = moduleManager.getSettingsManager().loadAndGetSettings(appSession.getAppPublicKey());
             } catch (Exception e) {
