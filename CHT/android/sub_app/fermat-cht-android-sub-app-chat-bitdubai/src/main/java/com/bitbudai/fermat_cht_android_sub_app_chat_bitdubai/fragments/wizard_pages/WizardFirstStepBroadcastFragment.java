@@ -41,7 +41,6 @@ import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfac
      EditText NombreLista;
      Toolbar toolbar;
      private ErrorManager errorManager;
-     private SettingsManager<ChatSettings> settingsManager;
      private ChatPreferenceSettings chatSettings;
 
      public static WizardFirstStepBroadcastFragment newInstance() {

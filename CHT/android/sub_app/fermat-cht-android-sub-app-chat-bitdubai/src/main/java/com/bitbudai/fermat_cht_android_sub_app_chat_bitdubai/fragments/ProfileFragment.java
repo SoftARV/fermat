@@ -79,7 +79,6 @@ public class ProfileFragment extends AbstractFermatFragment {
     private ChatManager chatManager;
     private ChatModuleManager moduleManager;
     private ErrorManager errorManager;
-    private SettingsManager<com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.settings.ChatSettings> settingsManager;
     private com.bitbudai.fermat_cht_android_sub_app_chat_bitdubai.sessions.ChatSession chatSession;
     private Toolbar toolbar;
     // Defines a tag for identifying log entries

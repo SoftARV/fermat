@@ -91,9 +91,8 @@ public class ContactsListFragment extends AbstractFermatFragment implements Cont
     private ChatManager chatManager;
     //private ChatModuleManager moduleManager;
     private ErrorManager errorManager;
-    private SettingsManager<ChatSettings> settingsManager;
     private ChatSession chatSession;
-    private ChatPreferenceSettings chatSettings;
+    private ChatPreferenceSettings chatSettings = null;
     ChatActorCommunitySelectableIdentity chatIdentity;
     //private Toolbar toolbar;
     ListView list;

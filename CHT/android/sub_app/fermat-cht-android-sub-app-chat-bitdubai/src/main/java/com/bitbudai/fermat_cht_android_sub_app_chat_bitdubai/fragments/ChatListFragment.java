@@ -70,8 +70,8 @@ import java.util.UUID;
 public class ChatListFragment extends AbstractFermatFragment{
     private ChatManager chatManager;
     private ErrorManager errorManager;
-    private SettingsManager<ChatSettings> settingsManager;
-    private ChatPreferenceSettings chatSettings;
+
+    private ChatPreferenceSettings chatSettings = null;
     private ChatSession chatSession;
     ChatListAdapter adapter;
     ChatActorCommunitySelectableIdentity chatIdentity;
