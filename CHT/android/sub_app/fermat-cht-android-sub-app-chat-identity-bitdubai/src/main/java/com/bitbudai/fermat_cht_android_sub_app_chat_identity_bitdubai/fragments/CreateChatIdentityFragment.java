@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,22 +43,18 @@ import com.bitdubai.fermat_android_api.layer.definition.wallet.utils.ImagesUtils
 import com.bitdubai.fermat_android_api.ui.Views.PresentationDialog;
 import com.bitdubai.fermat_android_api.ui.transformation.CircleTransform;
 import com.bitdubai.fermat_api.FermatException;
-import com.bitdubai.fermat_api.layer.all_definition.enums.Country;
 import com.bitdubai.fermat_api.layer.all_definition.enums.UISource;
-import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.enums.Activities;
 import com.bitdubai.fermat_api.layer.all_definition.settings.structure.SettingsManager;
 import com.bitdubai.fermat_api.layer.dmp_engine.sub_app_runtime.enums.SubApps;
 import com.bitdubai.fermat_cht_android_sub_app_chat_identity_bitdubai.R;
 
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CHTException;
 import com.bitdubai.fermat_cht_api.layer.identity.exceptions.CantGetChatIdentityException;
-import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.ChatPreferenceSettings;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.identity.ChatIdentityModuleManager;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.identity.ChatIdentityPreferenceSettings;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.enums.UnexpectedSubAppExceptionSeverity;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.enums.UnexpectedUIExceptionSeverity;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfaces.ErrorManager;
-import com.fermat_cht_plugin.layer.sub_app_module.chat.identity.bitdubai.version_1.ChatIdentitySubAppModulePluginRoot;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -101,9 +96,9 @@ public class CreateChatIdentityFragment extends AbstractFermatFragment {
         super.onCreate(savedInstanceState);
 
         try {
-             Session = (ChatIdentitySession) appSession;
+            Session = (ChatIdentitySession) appSession;
             moduleManager =  Session.getModuleManager();
-             errorManager = Session.getErrorManager();
+            errorManager = Session.getErrorManager();
 
             chatIdentitySettings = null;
             try {
@@ -295,7 +290,7 @@ public class CreateChatIdentityFragment extends AbstractFermatFragment {
                 .setTemplateType(PresentationDialog.TemplateType.TYPE_PRESENTATION_WITHOUT_IDENTITIES)
                 .setIconRes(R.drawable.chat_identity_subapp)
                 .setBannerRes(R.drawable.banner_identity_chat)
-                .setIsCheckEnabled(true)
+                .setIsCheckEnabled(false)
                 .setTextFooter(R.string.cht_chat_footer).build();
         pd.show();
         } catch (Exception e) {
@@ -371,7 +366,8 @@ public class CreateChatIdentityFragment extends AbstractFermatFragment {
                         if (donde.equalsIgnoreCase("onClick")) {
                             textViewChtTitle.setText(mBrokerName.getText());
                             Toast.makeText(getActivity(), "Chat Identity Update.", Toast.LENGTH_LONG).show();
-                            changeActivity(Activities.CHT_CHAT_CREATE_IDENTITY, appSession.getAppPublicKey());
+                            getActivity().onBackPressed();
+                            //changeActivity(Activities.CHT_CHAT_CREATE_IDENTITY, appSession.getAppPublicKey());
                         }
                         break;
                 }
@@ -391,7 +387,8 @@ public class CreateChatIdentityFragment extends AbstractFermatFragment {
                         if (donde.equalsIgnoreCase("onClick")) {
                             textViewChtTitle.setText(mBrokerName.getText());
                             Toast.makeText(getActivity(), "Chat Identity Update.", Toast.LENGTH_LONG).show();
-                            changeActivity(Activities.CHT_CHAT_CREATE_IDENTITY, appSession.getAppPublicKey());
+                            getActivity().onBackPressed();
+                           // changeActivity(Activities.CHT_CHAT_CREATE_IDENTITY, appSession.getAppPublicKey());
                         }
                         break;
                 }
@@ -425,7 +422,8 @@ public class CreateChatIdentityFragment extends AbstractFermatFragment {
                         if (donde.equalsIgnoreCase("onClick")) {
                             textViewChtTitle.setText(mBrokerName.getText().toString());
                             Toast.makeText(getActivity(), "Chat Identity Created.", Toast.LENGTH_LONG).show();
-                            changeActivity(Activities.CHT_CHAT_CREATE_IDENTITY, appSession.getAppPublicKey());
+                            getActivity().onBackPressed();
+                            //changeActivity(Activities.CHT_CHAT_CREATE_IDENTITY, appSession.getAppPublicKey());
                         }
                         break;
                 }      } catch (CantGetChatIdentityException e) {
