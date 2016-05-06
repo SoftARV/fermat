@@ -38,6 +38,10 @@ public interface Chat {
     List<Contact> getContactAssociated();
     void setContactAssociated(List<Contact> chatContacts);
     void setContactAssociated(Contact contact);
+    public boolean isWriting();
+    public void setIsWriting(boolean isWriting);
+    public boolean isOnline();
+    public void setIsOnline(boolean isWriting);
     /**
      * This method will return a String with xml format with the contact list
      * @return

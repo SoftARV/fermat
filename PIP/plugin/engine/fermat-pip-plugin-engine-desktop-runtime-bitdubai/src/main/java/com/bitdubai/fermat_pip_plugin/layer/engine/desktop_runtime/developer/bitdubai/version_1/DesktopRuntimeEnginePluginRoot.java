@@ -133,7 +133,7 @@ public class DesktopRuntimeEnginePluginRoot extends AbstractPlugin implements De
             pluginTextFile.loadFromMedia();
             dev = pluginTextFile.getContent();
         }catch (Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
             dev = "false";
         }
         return dev.equals("true");
@@ -564,7 +564,9 @@ public class DesktopRuntimeEnginePluginRoot extends AbstractPlugin implements De
             } else {
                 fermatStructure = getAppByPublicKey("main_desktop");
                 if (fermatStructure != null) {
-                    lstDesktops.put("main_desktop", (DesktopObject) fermatStructure);
+                    if(!lstDesktops.containsKey("main_desktop")) {
+                        lstDesktops.put("main_desktop", (DesktopObject) fermatStructure);
+                    }
                 }
             }
         }catch (Exception e){

@@ -10,12 +10,12 @@ import com.bitdubai.fermat_api.layer.all_definition.settings.exceptions.CantGetS
 import com.bitdubai.fermat_api.layer.all_definition.settings.exceptions.CantPersistSettingsException;
 import com.bitdubai.fermat_api.layer.all_definition.settings.exceptions.SettingsNotFoundException;
 import com.bitdubai.fermat_api.layer.all_definition.settings.structure.SettingsManager;
+import com.bitdubai.fermat_api.layer.modules.ModuleSettingsImpl;
 import com.bitdubai.fermat_api.layer.modules.exceptions.ActorIdentityNotSelectedException;
 import com.bitdubai.fermat_api.layer.modules.exceptions.CantGetSelectedActorIdentityException;
 import com.bitdubai.fermat_api.layer.modules.interfaces.ModuleManager;
 
 
-import com.bitdubai.fermat_api.layer.osa_android.database_system.exceptions.CantInsertRecordException;
 import com.bitdubai.fermat_cht_api.layer.actor_network_service.exceptions.ConnectionRequestNotFoundException;
 
 import com.bitdubai.fermat_cht_api.layer.identity.exceptions.CantGetChatActorWaitingException;
@@ -25,7 +25,6 @@ import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_co
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.ActorConnectionRequestNotFoundException;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.CantAcceptChatRequestException;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.CantGetChtActorSearchResult;
-import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.CantGetSelectedActorException;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.CantListChatActorException;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.CantListChatIdentitiesToSelectException;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.CantRequestActorConnectionException;
@@ -42,7 +41,7 @@ import java.util.UUID;
 /**
  * Created by Eleazar (eorono@protonmail.com) on 3/04/16.
  */
-public interface ChatActorCommunitySubAppModuleManager extends ModuleManager <ChatActorCommunitySettings, ChatActorCommunitySelectableIdentity> {
+public interface ChatActorCommunitySubAppModuleManager extends ModuleManager, ModuleSettingsImpl<ChatActorCommunitySettings> {
 
 
 
@@ -80,9 +79,6 @@ public interface ChatActorCommunitySubAppModuleManager extends ModuleManager <Ch
 
 
 
-    List<ChatActorCommunityInformation> getSuggestionsToContact(String publicKey, int max, int offset) throws CantListChatIdentityException;
-
-    List<ChatActorCommunityInformation> getCacheSuggestionsToContact(int max, int offset) throws CantListChatIdentityException;
 
     List<ChatActorCommunityInformation> listChatActorPendingRemoteAction(final ChatActorCommunitySelectableIdentity selectedIdentity,
                                                                                 final int max,
@@ -90,7 +86,6 @@ public interface ChatActorCommunitySubAppModuleManager extends ModuleManager <Ch
 
     List<ChatActorCommunityInformation> getChatActorWaitingYourAcceptanceCount(String publicKey, int max, int offset) throws CantGetChatActorWaitingException;
 
-    void saveCacheChatUsersSuggestions(List<ChatActorCommunityInformation> listChatUser) throws CantInsertRecordException;
 
     ConnectionState getActorConnectionState(String publicKey) throws CantValidateActorConnectionStateException;
     @Override

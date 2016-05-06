@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,15 +33,11 @@ import com.bitdubai.fermat_android_api.ui.interfaces.FermatListItemListeners;
 import com.bitdubai.fermat_android_api.ui.interfaces.FermatWorkerCallBack;
 import com.bitdubai.fermat_android_api.ui.util.FermatWorker;
 import com.bitdubai.fermat_api.FermatException;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.enums.NetworkStatus;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.exceptions.CantGetCommunicationNetworkStatusException;
 import com.bitdubai.fermat_api.layer.all_definition.enums.UISource;
 import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.enums.Activities;
 import com.bitdubai.fermat_api.layer.all_definition.settings.structure.SettingsManager;
 import com.bitdubai.fermat_api.layer.modules.exceptions.ActorIdentityNotSelectedException;
 import com.bitdubai.fermat_api.layer.modules.exceptions.CantGetSelectedActorIdentityException;
-import com.bitdubai.fermat_cht_api.layer.identity.exceptions.CantListChatIdentityException;
-import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.exceptions.CantGetChtActorSearchResult;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.interfaces.ChatActorCommunityInformation;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.interfaces.ChatActorCommunitySubAppModuleManager;
 import com.bitdubai.fermat_cht_api.layer.sup_app_module.interfaces.chat_actor_community.settings.ChatActorCommunitySettings;
@@ -53,10 +46,8 @@ import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.enums.Un
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfaces.ErrorManager;
 import com.bitdubai.sub_app.chat_community.adapters.CommunityListAdapter;
 import com.bitdubai.sub_app.chat_community.R;
-import com.bitdubai.sub_app.chat_community.common.popups.ErrorConnectingFermatNetworkDialog;
 import com.bitdubai.sub_app.chat_community.common.popups.PresentationChatCommunityDialog;
 import com.bitdubai.sub_app.chat_community.constants.Constants;
-import com.bitdubai.sub_app.chat_community.interfaces.ErrorConnectingFermatNetwork;
 import com.bitdubai.sub_app.chat_community.session.ChatUserSubAppSession;
 import com.bitdubai.sub_app.chat_community.util.CommonLogger;
 
@@ -201,7 +192,7 @@ public class ConnectionsWorldFragment
             searchEditText = (EditText) searchView.findViewById(R.id.search);
             closeSearch = (ImageView) searchView.findViewById(R.id.close_search);
             searchEmptyView = (LinearLayout) rootView.findViewById(R.id.search_empty_view);
-
+            showEmpty(true, emptyView);
 
             if(launchActorCreationDialog) {
                 PresentationDialog presentationDialog = new PresentationDialog.Builder(getActivity(), appSession)
@@ -232,7 +223,14 @@ public class ConnectionsWorldFragment
                             null,
                             moduleManager,
                             PresentationChatCommunityDialog.TYPE_PRESENTATION_WITHOUT_IDENTITIES);
-                    presentationChatCommunityDialog.show();
+                presentationChatCommunityDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        invalidate();
+                        onRefresh();
+                    }
+                });
+                presentationChatCommunityDialog.show();
             }
             else
             {
@@ -306,7 +304,7 @@ public class ConnectionsWorldFragment
     public void showEmpty(boolean show, View emptyView) {
         Animation anim = AnimationUtils.loadAnimation(getActivity(),
                 show ? android.R.anim.fade_in : android.R.anim.fade_out);
-        if (show && (emptyView.getVisibility() == View.GONE || emptyView.getVisibility() == View.INVISIBLE)) {
+        if (show /*&& (emptyView.getVisibility() == View.GONE || emptyView.getVisibility() == View.INVISIBLE)*/) {
             emptyView.setAnimation(anim);
             emptyView.setVisibility(View.VISIBLE);
             noData.setAnimation(anim);
@@ -314,17 +312,21 @@ public class ConnectionsWorldFragment
             noDatalabel.setAnimation(anim);
             noData.setVisibility(View.VISIBLE);
             noDatalabel.setVisibility(View.VISIBLE);
+            rootView.setBackgroundResource(R.drawable.fondo);
             if (adapter != null)
                 adapter.changeDataSet(null);
-        } else if (!show && emptyView.getVisibility() == View.VISIBLE) {
+        } else if (!show /*&& emptyView.getVisibility() == View.VISIBLE*/) {
             emptyView.setAnimation(anim);
             emptyView.setVisibility(View.GONE);
             noData.setAnimation(anim);
+            emptyView.setBackgroundResource(0);
             noDatalabel.setAnimation(anim);
-            ColorDrawable bgcolor = new ColorDrawable(Color.parseColor("#F9F9F9"));
-            emptyView.setBackground(bgcolor);
             noData.setVisibility(View.GONE);
             noDatalabel.setVisibility(View.GONE);
+            rootView.setBackgroundResource(0);
+            ColorDrawable bgcolor = new ColorDrawable(Color.parseColor("#F9F9F9"));
+            emptyView.setBackground(bgcolor);
+            rootView.setBackground(bgcolor);
         }
     }
 
@@ -498,6 +500,7 @@ public class ConnectionsWorldFragment
 
     private void showDialogHelp() {
         try {
+            moduleManager = appSession.getModuleManager();
             if (moduleManager.getSelectedActorIdentity() != null) {
                 if (!moduleManager.getSelectedActorIdentity().getPublicKey().isEmpty()) {
                     PresentationChatCommunityDialog presentationChatCommunityDialog =
@@ -557,8 +560,34 @@ public class ConnectionsWorldFragment
                 });
             }
         } catch (CantGetSelectedActorIdentityException e) {
+            PresentationChatCommunityDialog presentationChatCommunityDialog =
+                    new PresentationChatCommunityDialog(getActivity(),
+                            chatUserSubAppSession,
+                            null,
+                            moduleManager,
+                            PresentationChatCommunityDialog.TYPE_PRESENTATION_WITHOUT_IDENTITIES);
+            presentationChatCommunityDialog.show();
+            presentationChatCommunityDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    //showCriptoUsersCache();
+                }
+            });
             e.printStackTrace();
         } catch (ActorIdentityNotSelectedException e) {
+            PresentationChatCommunityDialog presentationChatCommunityDialog =
+                    new PresentationChatCommunityDialog(getActivity(),
+                            chatUserSubAppSession,
+                            null,
+                            moduleManager,
+                            PresentationChatCommunityDialog.TYPE_PRESENTATION_WITHOUT_IDENTITIES);
+            presentationChatCommunityDialog.show();
+            presentationChatCommunityDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    //showCriptoUsersCache();
+                }
+            });
             e.printStackTrace();
         }
     }

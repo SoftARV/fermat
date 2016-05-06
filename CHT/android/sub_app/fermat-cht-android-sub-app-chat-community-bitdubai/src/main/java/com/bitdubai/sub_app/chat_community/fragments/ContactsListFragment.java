@@ -142,12 +142,12 @@ public class ContactsListFragment
             adapter = new ContactsListAdapter(getActivity(), lstChatUserInformations);
             adapter.setFermatListEventListener(this);
             recyclerView.setAdapter(adapter);
-            rootView.setBackgroundResource(R.drawable.fondo);
             noDatalabel = (TextView) rootView.findViewById(R.id.nodatalabel);
             noData=(ImageView) rootView.findViewById(R.id.nodata);
             swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
             swipeRefresh.setOnRefreshListener(this);
             swipeRefresh.setColorSchemeColors(Color.BLUE, Color.BLUE);
+            showEmpty(true, emptyView);
             onRefresh();
         } catch (Exception ex) {
             CommonLogger.exception(TAG, ex.getMessage(), ex);
@@ -232,26 +232,30 @@ public class ContactsListFragment
     public void showEmpty(boolean show, View emptyView) {
         Animation anim = AnimationUtils.loadAnimation(getActivity(),
                 show ? android.R.anim.fade_in : android.R.anim.fade_out);
-        if (show &&
-                (emptyView.getVisibility() == View.GONE || emptyView.getVisibility() == View.INVISIBLE)) {
+        if (show /*&&
+                (emptyView.getVisibility() == View.GONE || emptyView.getVisibility() == View.INVISIBLE)*/) {
             emptyView.setAnimation(anim);
             emptyView.setVisibility(View.VISIBLE);
-            emptyView.setBackgroundResource(R.drawable.fondo);
             noData.setAnimation(anim);
+            emptyView.setBackgroundResource(R.drawable.fondo);
             noDatalabel.setAnimation(anim);
-            noDatalabel.setVisibility(View.VISIBLE);
             noData.setVisibility(View.VISIBLE);
+            noDatalabel.setVisibility(View.VISIBLE);
+            rootView.setBackgroundResource(R.drawable.fondo);
             if (adapter != null)
                 adapter.changeDataSet(null);
-        } else if (!show && emptyView.getVisibility() == View.VISIBLE) {
+        } else if (!show /*&& emptyView.getVisibility() == View.VISIBLE*/) {
             emptyView.setAnimation(anim);
             emptyView.setVisibility(View.GONE);
+            noData.setAnimation(anim);
+            emptyView.setBackgroundResource(0);
+            noDatalabel.setAnimation(anim);
+            noData.setVisibility(View.GONE);
+            noDatalabel.setVisibility(View.GONE);
+            rootView.setBackgroundResource(0);
             ColorDrawable bgcolor = new ColorDrawable(Color.parseColor("#F9F9F9"));
             emptyView.setBackground(bgcolor);
-            noData.setAnimation(anim);
-            noDatalabel.setAnimation(anim);
-            noDatalabel.setVisibility(View.GONE);
-            noData.setVisibility(View.GONE);
+            rootView.setBackground(bgcolor);
         }
     }
 

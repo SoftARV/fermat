@@ -3,42 +3,31 @@ package com.fermat_cht_plugin.layer.sub_app_module.chat.developer.bitdubai.versi
 import com.bitdubai.fermat_api.FermatException;
 import com.bitdubai.fermat_api.layer.actor_connection.common.enums.ConnectionState;
 import com.bitdubai.fermat_api.layer.actor_connection.common.exceptions.CantListActorConnectionsException;
-import com.bitdubai.fermat_api.layer.all_definition.components.enums.PlatformComponentType;
 import com.bitdubai.fermat_api.layer.all_definition.enums.Plugins;
 import com.bitdubai.fermat_api.layer.all_definition.settings.structure.SettingsManager;
+import com.bitdubai.fermat_api.layer.modules.ModuleManagerImpl;
 import com.bitdubai.fermat_api.layer.modules.common_classes.ActiveActorIdentityInformation;
 import com.bitdubai.fermat_api.layer.modules.exceptions.ActorIdentityNotSelectedException;
 import com.bitdubai.fermat_api.layer.modules.exceptions.CantGetSelectedActorIdentityException;
 import com.bitdubai.fermat_api.layer.osa_android.file_system.PluginFileSystem;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantCreateSelfIdentityException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantDeleteChatException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantDeleteContactConnectionException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantDeleteContactException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantDeleteGroupException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantDeleteGroupMemberException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantDeleteMessageException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetChatException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetChatUserIdentityException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetContactConnectionException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetContactException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetGroupException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetMessageException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetNetworkServicePublicKeyException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetOwnIdentitiesException;
+import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetOnlineStatus;
+import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetWritingStatus;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantListChatActorException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantListGroupException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantListGroupMemberException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantNewEmptyChatException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantNewEmptyContactException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantNewEmptyMessageException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSaveChatException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSaveContactConnectionException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSaveContactException;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSaveGroupException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSaveGroupMemberException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSaveMessageException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSendChatMessageException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.SendStatusUpdateMessageNotificationException;
+import com.bitdubai.fermat_cht_api.all_definition.exceptions.SendWritingStatusMessageNotificationException;
 import com.bitdubai.fermat_cht_api.layer.actor_connection.interfaces.ChatActorConnectionManager;
 import com.bitdubai.fermat_cht_api.layer.actor_connection.interfaces.ChatActorConnectionSearch;
 import com.bitdubai.fermat_cht_api.layer.actor_connection.utils.ChatActorConnection;
@@ -47,10 +36,6 @@ import com.bitdubai.fermat_cht_api.layer.identity.exceptions.CantListChatIdentit
 import com.bitdubai.fermat_cht_api.layer.identity.interfaces.ChatIdentity;
 import com.bitdubai.fermat_cht_api.layer.identity.interfaces.ChatIdentityManager;
 import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.Chat;
-import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.ChatUserIdentity;
-import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.Contact;
-import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.ContactConnection;
-import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.Group;
 import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.GroupMember;
 import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.Message;
 import com.bitdubai.fermat_cht_api.layer.middleware.interfaces.MiddlewareChatManager;
@@ -65,7 +50,6 @@ import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfac
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,7 +57,7 @@ import java.util.UUID;
  * Created by franklin on 06/01/16.
  * Updated by Jose Cardozo josejcb (josejcb89@gmail.com) on 16/03/16.
  */
-public class ChatSupAppModuleManager implements ChatManager, Serializable {
+public class ChatSupAppModuleManager extends ModuleManagerImpl<ChatPreferenceSettings> implements ChatManager, Serializable {
 
     private final MiddlewareChatManager middlewareChatManager;
     private final ChatIdentityManager chatIdentityManager;
@@ -90,6 +74,7 @@ public class ChatSupAppModuleManager implements ChatManager, Serializable {
                                    UUID pluginId,
                                    ErrorManager errorManager)
     {
+        super(pluginFileSystem,pluginId);
         this.middlewareChatManager          = middlewareChatManager         ;
         this.chatIdentityManager            = chatIdentityManager           ;
         this.pluginFileSystem               = pluginFileSystem              ;
@@ -253,6 +238,25 @@ public class ChatSupAppModuleManager implements ChatManager, Serializable {
     }
 
     @Override
+    public void sendWritingStatus(UUID chatId) throws SendWritingStatusMessageNotificationException {
+        middlewareChatManager.sendWritingStatus(chatId);
+    }
+
+    @Override
+    public boolean checkWritingStatus(UUID chatId) throws CantGetWritingStatus {
+        return middlewareChatManager.checkWritingStatus(chatId);
+    }
+
+    @Override
+    public boolean checkOnlineStatus(String contactPublicKey) throws CantGetOnlineStatus {
+        return middlewareChatManager.checkOnlineStatus(contactPublicKey);
+    }
+    @Override
+    public void activeOnlineStatus(String contactPublicKey) throws CantGetOnlineStatus {
+         middlewareChatManager.activeOnlineStatus(contactPublicKey);
+    }
+
+    @Override
     public void saveGroupMember(GroupMember groupMember) throws CantSaveGroupMemberException {
         middlewareChatManager.saveGroupMember(groupMember);
     }
@@ -289,18 +293,6 @@ public class ChatSupAppModuleManager implements ChatManager, Serializable {
      *
      * @return a new instance of the settings manager for the specified fermat settings object.
      */
-    @Override
-    public SettingsManager<ChatPreferenceSettings> getSettingsManager() {
-        if (this.settingsManager != null)
-            return this.settingsManager;
-
-        this.settingsManager = new SettingsManager<>(
-                pluginFileSystem,
-                pluginId
-        );
-
-        return this.settingsManager;
-    }
 
     /**
      * Through the method <code>getSelectedActorIdentity</code> we can get the selected actor identity.

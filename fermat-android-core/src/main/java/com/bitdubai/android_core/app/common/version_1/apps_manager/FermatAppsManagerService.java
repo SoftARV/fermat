@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.bitdubai.android_core.app.ApplicationSession;
+import com.bitdubai.android_core.app.common.version_1.communication.client_system_broker.exceptions.CantCreateProxyException;
 import com.bitdubai.android_core.app.common.version_1.connection_manager.FermatAppConnectionManager;
 import com.bitdubai.android_core.app.common.version_1.recents.RecentApp;
 import com.bitdubai.android_core.app.common.version_1.recents.RecentAppComparator;
@@ -20,6 +22,7 @@ import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.interfa
 import com.bitdubai.fermat_api.layer.all_definition.runtime.FermatApp;
 import com.bitdubai.fermat_api.layer.dmp_module.AppManager;
 import com.bitdubai.fermat_api.layer.engine.runtime.RuntimeManager;
+import com.bitdubai.fermat_api.layer.modules.interfaces.ModuleManager;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -79,9 +82,9 @@ public class FermatAppsManagerService extends Service implements com.bitdubai.fe
     public void init(){
         AppsConfiguration appsConfiguration = new AppsConfiguration(this);
         appsInstalledInDevice = appsConfiguration.readAppsCoreInstalled();
-        if(appsInstalledInDevice.isEmpty()){
+        //if(appsInstalledInDevice.isEmpty()){
             appsInstalledInDevice = appsConfiguration.updateAppsCoreInstalled();
-        }
+        //}
     }
 
     public FermatStructure lastAppStructure() {
@@ -168,14 +171,14 @@ public class FermatAppsManagerService extends Service implements com.bitdubai.fe
         if(fermatSessionManager.isSessionOpen(fermatApp.getAppPublicKey())){
             fermatSession = fermatSessionManager.getAppsSession(fermatApp.getAppPublicKey());
         }else {
-//            ModuleManager moduleManager = null;
-//            try {
-//                moduleManager = ApplicationSession.getInstance().getServicesHelpers().getClientSideBrokerServiceAIDL().getModuleManager(fermatAppConnection.getPluginVersionReference());
-//            } catch (CantCreateProxyException e) {
-//                e.printStackTrace();
-//            }
-//            fermatSession = fermatSessionManager.openAppSession(fermatApp, FermatSystemUtils.getErrorManager(), moduleManager, fermatAppConnection);
-            fermatSession = fermatSessionManager.openAppSession(fermatApp, FermatSystemUtils.getErrorManager(), FermatSystemUtils.getModuleManager(fermatAppConnection.getPluginVersionReference()), fermatAppConnection);
+            ModuleManager moduleManager = null;
+            try {
+                moduleManager = ApplicationSession.getInstance().getServicesHelpers().getClientSideBrokerServiceAIDL().getModuleManager(fermatAppConnection.getPluginVersionReference());
+            } catch (CantCreateProxyException e) {
+                e.printStackTrace();
+            }
+            fermatSession = fermatSessionManager.openAppSession(fermatApp, FermatSystemUtils.getErrorManager(), moduleManager, fermatAppConnection);
+//            fermatSession = fermatSessionManager.openAppSession(fermatApp, FermatSystemUtils.getErrorManager(), FermatSystemUtils.getModuleManager(fermatAppConnection.getPluginVersionReference()), fermatAppConnection);
         }
         fermatAppConnection.setFullyLoadedSession(fermatSession);
         return fermatSession;
@@ -218,7 +221,13 @@ public class FermatAppsManagerService extends Service implements com.bitdubai.fe
 
     @Override
     public FermatStructure getAppStructure(String appPublicKey) {
-        return selectRuntimeManager(appsInstalledInDevice.get(appPublicKey)).getAppByPublicKey(appPublicKey);
+        FermatAppType fermatAppType =appsInstalledInDevice.get(appPublicKey);
+        if(fermatAppType!=null) {
+            return selectRuntimeManager(fermatAppType).getAppByPublicKey(appPublicKey);
+        }else{
+            Log.e(TAG,"App instaled in device null: "+appPublicKey);
+            return null;
+        }
     }
 
     @Override
